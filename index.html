@@ -3,615 +3,1001 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI TTS 음성 변환기</title>
-
+<title>AI 축구 분석 리포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+*{box-sizing:border-box;margin:0;padding:0;}
 
-*{
-  box-sizing:border-box;
+:root{
+  --bg:#050d18;
+  --surface:#0b1929;
+  --card:#0f2235;
+  --border:#1a3a55;
+  --green:#39ff8f;
+  --green-dim:#1a7a45;
+  --blue:#4fc3f7;
+  --text:#e8f4fd;
+  --muted:#6a93b0;
+  --danger:#ff5252;
+  --gold:#ffd740;
 }
 
 body{
-  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Sans KR',sans-serif;
   min-height:100vh;
-  background:linear-gradient(135deg,#e3f2fd,#fce4ec);
-  font-family:Arial,sans-serif;
+  position:relative;
+  overflow-x:hidden;
 }
 
-.container{
-  width:min(900px,92%);
-  margin:40px auto;
-  background:white;
-  border-radius:24px;
-  padding:28px;
-  box-shadow:0 15px 35px rgba(0,0,0,.15);
+/* 경기장 잔디 패턴 배경 */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 38px,
+      rgba(57,255,143,.03) 38px,
+      rgba(57,255,143,.03) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 38px,
+      rgba(57,255,143,.03) 38px,
+      rgba(57,255,143,.03) 40px
+    );
+  pointer-events:none;
+  z-index:0;
 }
 
-h1{
-  text-align:center;
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:960px;
+  margin:0 auto;
+  padding:24px 16px 60px;
 }
 
-.subtitle{
-  text-align:center;
-  color:#666;
-  margin-bottom:20px;
-}
-
-.login-box{
-  text-align:center;
-  margin-bottom:20px;
-}
-
-.user-info{
-  margin-top:10px;
-  font-size:14px;
-}
-
-textarea{
-  width:100%;
-  min-height:180px;
-  padding:15px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  font-size:16px;
-}
-
-.option-box{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
-  margin-top:15px;
-}
-
-select,input{
-  height:45px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:0 10px;
-}
-
-button{
-  border:none;
-  border-radius:12px;
-  height:45px;
-  padding:0 15px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.login-btn{
-  background:#4285f4;
-  color:white;
-}
-
-.logout-btn{
-  background:#ef5350;
-  color:white;
-}
-
-.make-btn{
-  background:#42a5f5;
-  color:white;
-}
-
-.history-btn{
-  background:#66bb6a;
-  color:white;
-}
-
-.button-row{
+/* ── 헤더 ── */
+header{
   display:flex;
-  gap:10px;
-  margin-top:15px;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  margin-bottom:24px;
+  gap:16px;
   flex-wrap:wrap;
 }
 
-.status{
-  margin-top:15px;
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-audio{
-  width:100%;
-  margin-top:20px;
+.logo-icon{
+  width:44px;height:44px;
+  background:var(--green);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
 }
 
-.history{
-  margin-top:30px;
+.logo-text{
+  font-family:'Oswald',sans-serif;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:.5px;
+  line-height:1.2;
 }
 
-.item{
-  padding:15px;
-  border-radius:12px;
-  background:#f7f7f7;
+.logo-text span{
+  color:var(--green);
+}
+
+.logo-sub{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:400;
+}
+
+/* ── 유저 영역 ── */
+.user-area{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+#userBadge{
+  display:none;
+  align-items:center;
+  gap:8px;
+  background:rgba(57,255,143,.08);
+  border:1px solid var(--green-dim);
+  border-radius:24px;
+  padding:6px 14px 6px 8px;
+  font-size:13px;
+}
+
+#userBadge.show{display:flex;}
+
+.avatar{
+  width:28px;height:28px;
+  border-radius:50%;
+  background:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;
+  font-weight:700;
+  color:var(--bg);
+}
+
+.btn{
+  border:none;
+  border-radius:10px;
+  padding:8px 18px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .15s;
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+.btn:active{transform:scale(.97);}
+
+.btn-login{
+  background:var(--green);
+  color:var(--bg);
+}
+.btn-login:hover{background:#5dffa8;}
+
+.btn-logout{
+  background:transparent;
+  border:1px solid var(--danger);
+  color:var(--danger);
+}
+.btn-logout:hover{background:rgba(255,82,82,.1);}
+
+/* ── 섹션 카드 ── */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  margin-bottom:20px;
+}
+
+.section-label{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--green);
+  font-family:'Oswald',sans-serif;
   margin-bottom:10px;
 }
 
-.item-date{
-  color:#888;
+/* ── 경기 정보 입력 ── */
+.match-grid{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:12px;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.team-input{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 14px;
+  color:var(--text);
+  font-size:15px;
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  width:100%;
+  text-align:center;
+  letter-spacing:.5px;
+}
+
+.team-input::placeholder{color:var(--muted);}
+.team-input:focus{outline:none;border-color:var(--green);}
+
+.vs-badge{
+  font-family:'Oswald',sans-serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--green);
+  text-align:center;
+  padding:0 8px;
+}
+
+.score-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.score-input{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px 14px;
+  color:var(--text);
+  font-size:14px;
+  width:100%;
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+.score-input::placeholder{color:var(--muted);}
+.score-input:focus{outline:none;border-color:var(--blue);}
+
+/* ── 통계 슬라이더 그리드 ── */
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+@media(max-width:560px){.stats-grid{grid-template-columns:1fr;}}
+
+.stat-item label{
+  display:flex;
+  justify-content:space-between;
   font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.stat-item label span{
+  color:var(--blue);
+  font-weight:700;
+}
+
+.stat-bar{
+  position:relative;
+  height:6px;
+  background:var(--border);
+  border-radius:4px;
+  margin-bottom:4px;
+}
+
+.stat-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--green-dim),var(--green));
+  border-radius:4px;
+  transition:width .3s;
+}
+
+input[type=range]{
+  width:100%;
+  -webkit-appearance:none;
+  height:6px;
+  border-radius:4px;
+  background:transparent;
+  margin-top:4px;
+  cursor:pointer;
+}
+
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:var(--green);
+  cursor:pointer;
+}
+
+/* ── 텍스트 에리어 ── */
+.analysis-textarea{
+  width:100%;
+  min-height:140px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  color:var(--text);
+  font-size:14px;
+  line-height:1.7;
+  resize:vertical;
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+.analysis-textarea::placeholder{color:var(--muted);}
+.analysis-textarea:focus{outline:none;border-color:var(--green);}
+
+/* ── 옵션 로우 ── */
+.options-row{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+
+.styled-select{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px 14px;
+  color:var(--text);
+  font-size:13px;
+  cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;
+  flex:1;
+  min-width:120px;
+}
+
+.styled-select:focus{outline:none;border-color:var(--green);}
+
+/* ── 실행 버튼 ── */
+.action-row{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+  flex-wrap:wrap;
+}
+
+.btn-generate{
+  background:linear-gradient(135deg,var(--green-dim),var(--green));
+  color:var(--bg);
+  font-size:14px;
+  padding:10px 24px;
+  border-radius:10px;
+  flex:1;
+}
+
+.btn-generate:hover{filter:brightness(1.1);}
+
+.btn-history{
+  background:transparent;
+  border:1px solid var(--blue);
+  color:var(--blue);
+  font-size:13px;
+  padding:10px 20px;
+  border-radius:10px;
+}
+
+.btn-history:hover{background:rgba(79,195,247,.08);}
+
+/* ── 상태 & 오디오 ── */
+.status-bar{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--muted);
+  min-height:20px;
+}
+
+.status-bar.ok{color:var(--green);}
+.status-bar.err{color:var(--danger);}
+
+audio{
+  width:100%;
+  margin-top:14px;
+  border-radius:10px;
+  filter:invert(1) hue-rotate(180deg);
+}
+
+/* ── AI 분석 자동 생성 버튼 ── */
+.btn-ai{
+  background:rgba(79,195,247,.1);
+  border:1px dashed var(--blue);
+  color:var(--blue);
+  font-size:12px;
+  padding:6px 14px;
+  border-radius:8px;
+  margin-top:8px;
+  font-family:'Noto Sans KR',sans-serif;
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-ai:hover{background:rgba(79,195,247,.18);}
+
+/* ── 기록 ── */
+.history-wrap{margin-top:4px;}
+
+.history-item{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:12px;
+  transition:border-color .15s;
+}
+
+.history-item:hover{border-color:var(--green-dim);}
+
+.history-match{
+  font-family:'Oswald',sans-serif;
+  font-size:17px;
+  font-weight:600;
+  color:var(--green);
+  margin-bottom:6px;
+}
+
+.history-meta{
+  font-size:12px;
+  color:var(--muted);
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+
+.history-text{
+  font-size:13px;
+  color:#b0cce0;
+  line-height:1.6;
+  border-left:3px solid var(--green-dim);
+  padding-left:10px;
+}
+
+.history-date{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:8px;
+  text-align:right;
+}
+
+.empty-state{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--muted);
+}
+
+.empty-state .big{font-size:40px;margin-bottom:10px;}
+
+/* ── 탭 ── */
+.tabs{
+  display:flex;
+  gap:4px;
+  margin-bottom:20px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:4px;
+}
+
+.tab{
+  flex:1;
+  text-align:center;
+  padding:9px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .15s;
+  color:var(--muted);
+  border:none;
+  background:transparent;
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+.tab.active{
+  background:var(--card);
+  color:var(--green);
+  border:1px solid var(--green-dim);
+}
+
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── 로딩 스피너 ── */
+.spinner{
+  display:inline-block;
+  width:14px;height:14px;
+  border:2px solid var(--border);
+  border-top-color:var(--green);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  vertical-align:middle;
+  margin-right:6px;
+}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── 점수판 프리뷰 ── */
+.scoreboard{
+  background:linear-gradient(135deg,#071520,#0a2233);
+  border:1px solid var(--green-dim);
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+}
+
+.scoreboard::before{
+  content:'';
+  position:absolute;
+  top:-30px;left:50%;
+  transform:translateX(-50%);
+  width:300px;height:60px;
+  background:radial-gradient(ellipse,rgba(57,255,143,.12),transparent 70%);
+}
+
+.score-display{
+  font-family:'Oswald',sans-serif;
+  font-size:48px;
+  font-weight:700;
+  letter-spacing:8px;
+  color:var(--text);
+  line-height:1;
+  margin:4px 0;
+}
+
+.score-display .separator{color:var(--green);}
+
+.score-teams{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:8px;
+  font-weight:500;
+}
+
+.live-dot{
+  display:inline-block;
+  width:8px;height:8px;
+  background:var(--danger);
+  border-radius:50%;
+  margin-right:5px;
+  animation:blink 1s ease-in-out infinite;
+}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+.score-minute{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
 }
 
 </style>
 </head>
-
 <body>
 
-<div class="container">
-
-<h1>AI TTS 음성 변환기</h1>
-
-<div class="subtitle">
-Firebase 로그인 + OpenAI TTS + Firebase 저장
-</div>
-
-<div class="login-box">
-
-<button
-class="login-btn"
-onclick="login()">
-구글 로그인
-</button>
-
-<button
-class="logout-btn"
-onclick="logout()">
-로그아웃
-</button>
-
-<div id="userInfo" class="user-info">
-로그인 필요
-</div>
-
-</div>
-
-<textarea
-id="textInput"
-placeholder="텍스트를 입력하세요">
-</textarea>
-
-<div class="option-box">
-
-<select id="modelSelect">
-<option value="tts-1">tts-1</option>
-<option value="tts-1-hd">tts-1-hd</option>
-</select>
-
-<select id="voiceSelect">
-<option value="alloy">alloy</option>
-<option value="echo">echo</option>
-<option value="fable">fable</option>
-<option value="onyx">onyx</option>
-<option value="nova">nova</option>
-<option value="shimmer">shimmer</option>
-</select>
-
-<input
-id="speedInput"
-type="number"
-value="1"
-min="0.25"
-max="4"
-step="0.1">
-
-</div>
-
-<div class="button-row">
-
-<button
-class="make-btn"
-onclick="makeSpeech()">
-음성 만들기
-</button>
-
-<button
-class="history-btn"
-onclick="loadHistory()">
-내 기록 보기
-</button>
-
-</div>
-
-<div id="status" class="status"></div>
-
-<audio
-id="audioPlayer"
-controls>
-</audio>
-<script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-import {
-  getDatabase,
-  ref,
-  push,
-  get,
-  child
-}
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-const firebaseConfig = {
-
-  apiKey: "AIzaSyCk0qXDAvnFE9bCdjrL03XpuM83s09t_Zk",
-
-  authDomain:
-    "realtestcount.firebaseapp.com",
-
-  databaseURL:
-    "https://realtestcount-default-rtdb.firebaseio.com",
-
-  projectId:
-    "realtestcount",
-
-  storageBucket:
-    "realtestcount.firebasestorage.app",
-
-  messagingSenderId:
-    "838572880697",
-
-  appId:
-    "1:838572880697:web:6326057ff983a5212e6ee8"
-
-};
-
-const app =
-  initializeApp(firebaseConfig);
-
-const auth =
-  getAuth(app);
-
-const provider =
-  new GoogleAuthProvider();
-
-const db =
-  getDatabase(app);
-
-window.currentUser = null;
-
-window.login = async function(){
-
-  try{
-
-    const result =
-      await signInWithPopup(
-        auth,
-        provider
-      );
-
-    window.currentUser =
-      result.user;
-
-  }
-  catch(error){
-
-    alert(error.message);
-
-  }
-
-};
-
-window.logout = async function(){
-
-  await signOut(auth);
-
-};
-
-onAuthStateChanged(
-  auth,
-  (user)=>{
-
-    window.currentUser =
-      user;
-
-    const userInfo =
-      document.getElementById(
-        "userInfo"
-      );
-
-    if(user){
-
-      userInfo.innerHTML =
-        `
-        <b>${user.displayName}</b><br>
-        ${user.email}
-        `;
-
-    }
-    else{
-
-      userInfo.textContent =
-        "로그인 필요";
-
-    }
-
-  }
-);
-
-window.db = db;
-
-window.ref = ref;
-
-window.push = push;
-
-window.get = get;
-
-window.child = child;
-
-</script>
-
-<script>
-
-const APPS_SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbyHlClKitmBDl2YuhIE2SHYXI-KdIy0gI8GiiSYj3Bvb3OZiqutDkc_QeaFUvhxFLjW/exec";
-
-async function makeSpeech(){
-
-  if(!window.currentUser){
-
-    alert(
-      "먼저 로그인해주세요."
-    );
-
-    return;
-  }
-
-  const text =
-    document
-    .getElementById(
-      "textInput"
-    )
-    .value
-    .trim();
-
-  if(!text){
-
-    alert(
-      "텍스트를 입력하세요."
-    );
-
-    return;
-  }
-
-  const model =
-    document
-    .getElementById(
-      "modelSelect"
-    )
-    .value;
-
-  const voice =
-    document
-    .getElementById(
-      "voiceSelect"
-    )
-    .value;
-
-  const speed =
-    Number(
-      document
-      .getElementById(
-        "speedInput"
-      )
-      .value
-    );
-
-  const status =
-    document
-    .getElementById(
-      "status"
-    );
-
-  try{
-
-    status.textContent =
-      "음성 생성 중...";
-<div id="history" class="history"></div>
-
-</div>
-        const response =
-      await fetch(
-        APPS_SCRIPT_URL,
-        {
-          method:"POST",
-          body:JSON.stringify({
-            text:text,
-            model:model,
-            voice:voice,
-            speed:speed
-          })
-        }
-      );
-
-    const result =
-      await response.json();
-
-    if(!result.success){
-
-      throw new Error(
-        result.error
-      );
-
-    }
-
-    const audioUrl =
-      "data:audio/mp3;base64," +
-      result.audioBase64;
-
-    document
-      .getElementById(
-        "audioPlayer"
-      )
-      .src =
-      audioUrl;
-
-    await push(
-
-      ref(
-        db,
-        "ttsHistory"
-      ),
-
-      {
-        uid:
-          currentUser.uid,
-
-        email:
-          currentUser.email,
-
-        name:
-          currentUser.displayName,
-
-        text:
-          text,
-
-        model:
-          model,
-
-        voice:
-          voice,
-
-        speed:
-          speed,
-
-        createdAt:
-          new Date()
-          .toLocaleString(
-            "ko-KR"
-          )
-
-      }
-
-    );
-
-    status.textContent =
-      "음성 생성 완료 및 저장 완료";
-
-  }
-  catch(error){
-
-    console.error(error);
-
-    status.textContent =
-      "오류 : " +
-      error.message;
-
-  }
-
-}
-
-async function loadHistory(){
-
-  if(!currentUser){
-
-    alert(
-      "로그인해주세요."
-    );
-
-    return;
-
-  }
-
-  const historyBox =
-    document.getElementById(
-      "history"
-    );
-
-  historyBox.innerHTML =
-    "불러오는 중...";
-
-  try{
-
-    const snapshot =
-      await get(
-        child(
-          ref(db),
-          "ttsHistory"
-        )
-      );
-
-    if(!snapshot.exists()){
-
-      historyBox.innerHTML =
-        "기록 없음";
-
-      return;
-
-    }
-
-    const data =
-      snapshot.val();
-
-    let html = "";
-
-    Object.entries(data)
-      .reverse()
-      .forEach(([id,item])=>{
-
-      if(
-        item.uid !==
-        currentUser.uid
-      ){
-        return;
-      }
-
-      html += `
-      <div class="item">
-
-        <b>
-        ${item.text}
-        </b>
-
-        <br><br>
-
-        모델 :
-        ${item.model}
-
-        <br>
-
-        음성 :
-        ${item.voice}
-
-        <br>
-
-        속도 :
-        ${item.speed}
-
-        <div class="item-date">
-
-        ${item.createdAt}
-
+<div class="wrap">
+
+  <!-- 헤더 -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⚽</div>
+      <div>
+        <div class="logo-text">MATCH<span>AI</span></div>
+        <div class="logo-sub">축구 경기 분석 &amp; 음성 리포트 시스템</div>
+      </div>
+    </div>
+    <div class="user-area">
+      <div id="userBadge">
+        <div class="avatar" id="avatarInitial">?</div>
+        <span id="userName">-</span>
+      </div>
+      <button class="btn btn-login" id="loginBtn" onclick="login()">구글 로그인</button>
+      <button class="btn btn-logout" id="logoutBtn" onclick="logout()" style="display:none">로그아웃</button>
+    </div>
+  </header>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('analyze',this)">⚽ 경기 분석</button>
+    <button class="tab" onclick="switchTab('history',this)">📋 분석 기록</button>
+  </div>
+
+  <!-- 분석 탭 -->
+  <div class="tab-panel active" id="tab-analyze">
+
+    <!-- 점수판 -->
+    <div class="card">
+      <div class="section-label">경기 정보</div>
+
+      <div class="match-grid">
+        <input class="team-input" id="homeTeam" placeholder="홈팀 이름" oninput="updateScoreboard()">
+        <div class="vs-badge">VS</div>
+        <input class="team-input" id="awayTeam" placeholder="원정팀 이름" oninput="updateScoreboard()">
+      </div>
+
+      <!-- 점수판 프리뷰 -->
+      <div class="scoreboard">
+        <div class="score-teams">
+          <span id="sb-home">홈팀</span>
+          <span><span class="live-dot"></span>LIVE</span>
+          <span id="sb-away">원정팀</span>
+        </div>
+        <div class="score-display">
+          <span id="sb-hscore">0</span>
+          <span class="separator"> : </span>
+          <span id="sb-ascore">0</span>
+        </div>
+        <div class="score-minute" id="sb-minute">경기 시간 미입력</div>
+      </div>
+
+      <div class="score-row">
+        <input class="score-input" id="homeScore" type="number" min="0" placeholder="홈 득점" oninput="updateScoreboard()">
+        <input class="score-input" id="awayScore" type="number" min="0" placeholder="원정 득점" oninput="updateScoreboard()">
+        <input class="score-input" id="matchMinute" type="number" min="1" max="120" placeholder="경기 시간(분)" oninput="updateScoreboard()">
+      </div>
+    </div>
+
+    <!-- 통계 -->
+    <div class="card">
+      <div class="section-label">경기 통계</div>
+      <div class="stats-grid">
+
+        <div class="stat-item">
+          <label>홈팀 점유율 <span id="posLabel">50%</span></label>
+          <input type="range" id="possession" min="0" max="100" value="50" oninput="updateStat('posLabel',this.value,'%')">
+        </div>
+
+        <div class="stat-item">
+          <label>홈팀 슈팅 <span id="shotLabel">0</span></label>
+          <input type="range" id="shots" min="0" max="30" value="0" oninput="updateStat('shotLabel',this.value,'')">
+        </div>
+
+        <div class="stat-item">
+          <label>홈팀 유효슈팅 <span id="sotLabel">0</span></label>
+          <input type="range" id="shotsOnTarget" min="0" max="20" value="0" oninput="updateStat('sotLabel',this.value,'')">
+        </div>
+
+        <div class="stat-item">
+          <label>홈팀 코너킥 <span id="cornerLabel">0</span></label>
+          <input type="range" id="corners" min="0" max="20" value="0" oninput="updateStat('cornerLabel',this.value,'')">
+        </div>
+
+        <div class="stat-item">
+          <label>홈팀 파울 <span id="foulLabel">0</span></label>
+          <input type="range" id="fouls" min="0" max="30" value="0" oninput="updateStat('foulLabel',this.value,'')">
+        </div>
+
+        <div class="stat-item">
+          <label>홈팀 경고 <span id="yellowLabel">0</span></label>
+          <input type="range" id="yellows" min="0" max="11" value="0" oninput="updateStat('yellowLabel',this.value,'')">
         </div>
 
       </div>
-      `;
+    </div>
 
-    });
+    <!-- 분석 텍스트 -->
+    <div class="card">
+      <div class="section-label">분석 내용</div>
 
-    historyBox.innerHTML =
-      html || "기록 없음";
+      <button class="btn-ai" onclick="generateAnalysis()">
+        ✨ AI가 통계 기반 분석 텍스트 자동 작성
+      </button>
 
+      <textarea
+        class="analysis-textarea"
+        id="textInput"
+        placeholder="분석 내용을 직접 입력하거나, 위 버튼으로 AI가 자동 작성합니다.&#10;&#10;예) 전반 45분, 홈팀이 집중적인 압박으로 경기를 주도하며 2:0 리드를 잡았습니다..."
+        style="margin-top:12px;"
+      ></textarea>
+
+      <div class="options-row">
+        <select class="styled-select" id="voiceSelect">
+          <option value="alloy">Alloy (중성)</option>
+          <option value="echo">Echo (남성)</option>
+          <option value="fable">Fable (영국식)</option>
+          <option value="onyx">Onyx (저음)</option>
+          <option value="nova">Nova (여성)</option>
+          <option value="shimmer">Shimmer (밝은 여성)</option>
+        </select>
+        <select class="styled-select" id="modelSelect">
+          <option value="tts-1">표준 품질</option>
+          <option value="tts-1-hd">HD 고품질</option>
+        </select>
+        <select class="styled-select" id="speedInput">
+          <option value="0.9">느리게 (×0.9)</option>
+          <option value="1" selected>보통 (×1.0)</option>
+          <option value="1.1">약간 빠르게 (×1.1)</option>
+          <option value="1.25">빠르게 (×1.25)</option>
+        </select>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-generate" onclick="makeSpeech()">🎙 음성 리포트 생성</button>
+        <button class="btn btn-history" onclick="switchTab('history', document.querySelector('.tab:nth-child(2)'));loadHistory();">📋 기록 보기</button>
+      </div>
+
+      <div class="status-bar" id="status"></div>
+      <audio id="audioPlayer" controls style="display:none;"></audio>
+    </div>
+
+  </div>
+
+  <!-- 기록 탭 -->
+  <div class="tab-panel" id="tab-history">
+    <div class="card">
+      <div class="section-label">내 분석 기록</div>
+      <div class="history-wrap" id="historyList">
+        <div class="empty-state">
+          <div class="big">📋</div>
+          <div>기록을 불러오려면 로그인하세요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getDatabase, ref, push, get, child }
+  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCk0qXDAvnFE9bCdjrL03XpuM83s09t_Zk",
+  authDomain: "realtestcount.firebaseapp.com",
+  databaseURL: "https://realtestcount-default-rtdb.firebaseio.com",
+  projectId: "realtestcount",
+  storageBucket: "realtestcount.firebasestorage.app",
+  messagingSenderId: "838572880697",
+  appId: "1:838572880697:web:6326057ff983a5212e6ee8"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// 팝업 차단 대비: 팝업 실패 시 리다이렉트로 재시도
+window.login = async function(){
+  try{
+    const result = await signInWithPopup(auth, provider);
+    window.currentUser = result.user;
+  } catch(e){
+    if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user'){
+      // 팝업이 막힌 경우 사용자에게 안내
+      setStatus('팝업이 차단되었습니다. 브라우저에서 팝업을 허용해 주세요.', 'err');
+    } else {
+      setStatus('로그인 오류: ' + e.message, 'err');
+    }
   }
-  catch(error){
+};
 
-    console.error(error);
+window.logout = async function(){
+  await signOut(auth);
+};
 
-    historyBox.innerHTML =
-      "불러오기 실패";
+const db = getDatabase(app);
+window.currentUser = null;
+window.db = db;
+window.dbRef = ref;
+window.dbPush = push;
+window.dbGet = get;
+window.dbChild = child;
 
+onAuthStateChanged(auth, (user)=>{
+  window.currentUser = user;
+  const badge = document.getElementById('userBadge');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if(user){
+    badge.classList.add('show');
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = '';
+    document.getElementById('avatarInitial').textContent =
+      (user.displayName || user.email || '?')[0].toUpperCase();
+    document.getElementById('userName').textContent =
+      user.displayName || user.email;
+  } else {
+    badge.classList.remove('show');
+    loginBtn.style.display = '';
+    logoutBtn.style.display = 'none';
   }
+});
+</script>
 
+<script>
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbyHlClKitmBDl2YuhIE2SHYXI-KdIy0gI8GiiSYj3Bvb3OZiqutDkc_QeaFUvhxFLjW/exec";
+
+/* ── 탭 전환 ── */
+function switchTab(id, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
+/* ── 점수판 업데이트 ── */
+function updateScoreboard(){
+  document.getElementById('sb-home').textContent =
+    document.getElementById('homeTeam').value || '홈팀';
+  document.getElementById('sb-away').textContent =
+    document.getElementById('awayTeam').value || '원정팀';
+  document.getElementById('sb-hscore').textContent =
+    document.getElementById('homeScore').value || '0';
+  document.getElementById('sb-ascore').textContent =
+    document.getElementById('awayScore').value || '0';
+  const min = document.getElementById('matchMinute').value;
+  document.getElementById('sb-minute').textContent =
+    min ? min + '분 경과' : '경기 시간 미입력';
+}
+
+/* ── 슬라이더 라벨 ── */
+function updateStat(labelId, val, suffix){
+  document.getElementById(labelId).textContent = val + suffix;
+}
+
+/* ── 상태 메시지 ── */
+function setStatus(msg, type=''){
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status-bar ' + type;
+}
+
+/* ── AI 분석 텍스트 생성 (Anthropic API 사용) ── */
+async function generateAnalysis(){
+  const home  = document.getElementById('homeTeam').value  || '홈팀';
+  const away  = document.getElementById('awayTeam').value  || '원정팀';
+  const hs    = document.getElementById('homeScore').value || '0';
+  const as_   = document.getElementById('awayScore').value || '0';
+  const min   = document.getElementById('matchMinute').value || '?';
+  const pos   = document.getElementById('possession').value;
+  const shots = document.getElementById('shots').value;
+  const sot   = document.getElementById('shotsOnTarget').value;
+  const cor   = document.getElementById('corners').value;
+  const fou   = document.getElementById('fouls').value;
+  const yel   = document.getElementById('yellows').value;
+
+  setStatus('<span class="spinner"></span>AI 분석 텍스트 생성 중...', '');
+  document.getElementById('status').innerHTML =
+    '<span class="spinner"></span>AI 분석 텍스트 생성 중...';
+
+  const prompt = `당신은 전문 축구 해설 분석가입니다. 아래 경기 데이터를 바탕으로 생동감 있고 전문적인 경기 분석 리포트를 한국어로 200~300자 내외로 작성해 주세요. 숫자를 자연스럽게 녹여내고, 경기 흐름과 핵심 포인트를 짚어 주세요.
+
+경기: ${home} vs ${away}
+현재 스코어: ${hs} : ${as_} (${min}분)
+홈팀 점유율: ${pos}%
+홈팀 슈팅: ${shots}회 / 유효슈팅: ${sot}회
+홈팀 코너킥: ${cor}회 / 파울: ${fou}회 / 경고: ${yel}개
+
+분석 리포트만 작성하세요. 제목이나 부가 설명 없이 바로 본문으로 시작하세요.`;
+
+  try{
+    const res = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1000,
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i=>i.text||'').join('\n').trim();
+    document.getElementById('textInput').value = text;
+    setStatus('✅ AI 분석 텍스트 생성 완료', 'ok');
+  } catch(e){
+    setStatus('분석 생성 오류: ' + e.message, 'err');
+  }
+}
+
+/* ── 음성 생성 ── */
+async function makeSpeech(){
+  if(!window.currentUser){
+    setStatus('먼저 구글 로그인이 필요합니다.', 'err');
+    return;
+  }
+
+  const text = document.getElementById('textInput').value.trim();
+  if(!text){ setStatus('분석 텍스트를 입력하거나 AI로 생성하세요.', 'err'); return; }
+
+  const home  = document.getElementById('homeTeam').value  || '홈팀';
+  const away  = document.getElementById('awayTeam').value  || '원정팀';
+  const hs    = document.getElementById('homeScore').value || '0';
+  const as_   = document.getElementById('awayScore').value || '0';
+  const model = document.getElementById('modelSelect').value;
+  const voice = document.getElementById('voiceSelect').value;
+  const speed = Number(document.getElementById('speedInput').value);
+
+  document.getElementById('status').innerHTML =
+    '<span class="spinner"></span>음성 리포트 생성 중...';
+
+  try{
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method:"POST",
+      body:JSON.stringify({ text, model, voice, speed })
+    });
+
+    const result = await response.json();
+    if(!result.success) throw new Error(result.error);
+
+    const audioPlayer = document.getElementById('audioPlayer');
+    audioPlayer.src = "data:audio/mp3;base64," + result.audioBase64;
+    audioPlayer.style.display = 'block';
+
+    // Firebase 저장
+    await window.dbPush(
+      window.dbRef(window.db, "soccerTTS"),
+      {
+        uid: window.currentUser.uid,
+        email: window.currentUser.email,
+        name: window.currentUser.displayName,
+        homeTeam: home,
+        awayTeam: away,
+        homeScore: hs,
+        awayScore: as_,
+        text,
+        model,
+        voice,
+        speed,
+        possession: document.getElementById('possession').value,
+        shots: document.getElementById('shots').value,
+        createdAt: new Date().toLocaleString('ko-KR')
+      }
+    );
+
+    setStatus('✅ 음성 리포트 생성 및 저장 완료', 'ok');
+  } catch(e){
+    setStatus('오류: ' + e.message, 'err');
+  }
+}
+
+/* ── 기록 불러오기 ── */
+async function loadHistory(){
+  const list = document.getElementById('historyList');
+
+  if(!window.currentUser){
+    list.innerHTML = `<div class="empty-state"><div class="big">🔐</div><div>로그인 후 기록을 확인할 수 있습니다.</div></div>`;
+    return;
+  }
+
+  list.innerHTML = '<span class="spinner"></span> 기록 불러오는 중...';
+
+  try{
+    const snapshot = await window.dbGet(
+      window.dbChild(window.dbRef(window.db), "soccerTTS")
+    );
+
+    if(!snapshot.exists()){
+      list.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>아직 분석 기록이 없습니다.</div></div>`;
+      return;
+    }
+
+    const data = snapshot.val();
+    const mine = Object.entries(data)
+      .reverse()
+      .filter(([,item])=> item.uid === window.currentUser.uid);
+
+    if(!mine.length){
+      list.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>내 분석 기록이 없습니다.</div></div>`;
+      return;
+    }
+
+    list.innerHTML = mine.map(([,item])=>`
+      <div class="history-item">
+        <div class="history-match">
+          ⚽ ${item.homeTeam||'홈팀'} ${item.homeScore||0} : ${item.awayScore||0} ${item.awayTeam||'원정팀'}
+        </div>
+        <div class="history-meta">
+          <span>🎙 ${item.voice}</span>
+          <span>📊 점유율 ${item.possession||'-'}%</span>
+          <span>🎯 슈팅 ${item.shots||'-'}회</span>
+          <span>${item.model === 'tts-1-hd' ? 'HD품질' : '표준품질'}</span>
+        </div>
+        <div class="history-text">${item.text}</div>
+        <div class="history-date">${item.createdAt}</div>
+      </div>
+    `).join('');
+
+  } catch(e){
+    list.innerHTML = `<div class="empty-state"><div class="big">⚠️</div><div>불러오기 실패: ${e.message}</div></div>`;
+  }
+}
+
+window.loadHistory = loadHistory;
 </script>
 
 </body>
