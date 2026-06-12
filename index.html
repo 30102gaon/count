@@ -296,7 +296,7 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
 <script type="module">
 import { initializeApp }
   from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getDatabase, ref, push, get, child }
   from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
@@ -329,18 +329,15 @@ window._get      = get;
 window._child    = child;
 window.currentUser = null;
 
-/* 로그인 / 로그아웃 */
-window.login = async () => {
-  try {
-    const r = await signInWithPopup(auth, provider);
-    window.currentUser = r.user;
-  } catch(e) {
-    const msg = e.code === 'auth/popup-blocked'
-      ? '팝업이 차단되었습니다. 브라우저에서 팝업을 허용해 주세요.'
-      : '로그인 오류: ' + e.message;
-    setStatus(msg, 'err');
-  }
+/* 로그인 — 리다이렉트 방식 (팝업 차단 우회) */
+window.login = () => {
+  signInWithRedirect(auth, provider);
 };
+
+/* 페이지 로드 시 리다이렉트 복귀 결과 처리 */
+getRedirectResult(auth).catch(e => {
+  console.error('로그인 오류:', e.code, e.message);
+});
 
 window.logout = async () => { await signOut(auth); };
 
@@ -372,7 +369,7 @@ onAuthStateChanged(auth, user => {
    🔧 Apps Script 배포 URL — 본인 URL로 교체
 ────────────────────────────────────────── */
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbz8axjxT6nxCtXoLLN0uegmXaKU7YQi_wczr3NHdjqnF1k7oahvXnCOowSJ6LEqnhh2/exec";
+  "https://script.google.com/macros/s/여기에_배포된_Apps_Script_URL을_붙여넣으세요/exec";
 
 /* ── 탭 전환 ── */
 function switchTab(id, btn) {
