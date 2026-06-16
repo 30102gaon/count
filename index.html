@@ -6,55 +6,30 @@
 <title>MatchAI — 축구 경기 분석 & 음성 리포트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Firebase compat (모듈 아님 → 타이밍 문제 없음) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-
 :root{
-  --bg:#050d18;
-  --surface:#0b1929;
-  --card:#0f2235;
-  --border:#1a3a55;
-  --green:#39ff8f;
-  --green-dim:#1a7a45;
-  --blue:#4fc3f7;
-  --text:#e8f4fd;
-  --muted:#6a93b0;
-  --danger:#ff5252;
+  --bg:#050d18;--surface:#0b1929;--card:#0f2235;--border:#1a3a55;
+  --green:#39ff8f;--green-dim:#1a7a45;--blue:#4fc3f7;
+  --text:#e8f4fd;--muted:#6a93b0;--danger:#ff5252;
 }
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Noto Sans KR',sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background-image:
-    repeating-linear-gradient(0deg,transparent,transparent 38px,rgba(57,255,143,.03) 38px,rgba(57,255,143,.03) 40px),
-    repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(57,255,143,.03) 38px,rgba(57,255,143,.03) 40px);
-  pointer-events:none;z-index:0;
-}
-
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 38px,rgba(57,255,143,.03) 38px,rgba(57,255,143,.03) 40px),repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(57,255,143,.03) 38px,rgba(57,255,143,.03) 40px);pointer-events:none;z-index:0;}
 .wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:24px 16px 60px;}
 
-/* ── 헤더 ── */
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 24px;
-  background:var(--surface);border:1px solid var(--border);border-radius:16px;
-  margin-bottom:24px;gap:16px;flex-wrap:wrap;
-}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
 .logo{display:flex;align-items:center;gap:12px;}
 .logo-icon{width:44px;height:44px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .logo-text{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;letter-spacing:.5px;line-height:1.2;}
 .logo-text span{color:var(--green);}
 .logo-sub{font-size:11px;color:var(--muted);}
 .user-area{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-
 #userBadge{display:none;align-items:center;gap:8px;background:rgba(57,255,143,.08);border:1px solid var(--green-dim);border-radius:24px;padding:6px 14px 6px 8px;font-size:13px;}
 #userBadge.show{display:flex;}
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);}
@@ -66,25 +41,21 @@ header{
 .btn-logout{background:transparent;border:1px solid var(--danger);color:var(--danger);}
 .btn-logout:hover{background:rgba(255,82,82,.1);}
 
-/* ── 탭 ── */
 .tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;}
 .tab{flex:1;text-align:center;padding:9px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--muted);border:none;background:transparent;font-family:'Noto Sans KR',sans-serif;}
 .tab.active{background:var(--card);color:var(--green);border:1px solid var(--green-dim);}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 
-/* ── 카드 ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
 .section-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-family:'Oswald',sans-serif;margin-bottom:12px;}
 
-/* ── 경기 입력 ── */
 .match-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:16px;}
-.team-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:15px;font-family:'Oswald',sans-serif;font-weight:600;width:100%;text-align:center;letter-spacing:.5px;}
+.team-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:15px;font-family:'Oswald',sans-serif;font-weight:600;width:100%;text-align:center;}
 .team-input::placeholder{color:var(--muted);}
 .team-input:focus{outline:none;border-color:var(--green);}
 .vs-badge{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--green);text-align:center;padding:0 8px;}
 
-/* ── 점수판 ── */
 .scoreboard{background:linear-gradient(135deg,#071520,#0a2233);border:1px solid var(--green-dim);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden;}
 .scoreboard::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:300px;height:60px;background:radial-gradient(ellipse,rgba(57,255,143,.12),transparent 70%);}
 .score-teams{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:500;}
@@ -99,7 +70,6 @@ header{
 .score-input::placeholder{color:var(--muted);}
 .score-input:focus{outline:none;border-color:var(--blue);}
 
-/* ── 통계 슬라이더 ── */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:560px){.stats-grid{grid-template-columns:1fr;}}
 .stat-item label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
@@ -107,35 +77,29 @@ header{
 input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:4px;background:var(--border);cursor:pointer;margin-top:2px;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;}
 
-/* ── 텍스트 에리어 ── */
 .analysis-textarea{width:100%;min-height:140px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:14px;line-height:1.7;resize:vertical;font-family:'Noto Sans KR',sans-serif;margin-top:12px;}
 .analysis-textarea::placeholder{color:var(--muted);}
 .analysis-textarea:focus{outline:none;border-color:var(--green);}
-
 .btn-ai{background:rgba(79,195,247,.1);border:1px dashed var(--blue);color:var(--blue);font-size:12px;padding:7px 16px;border-radius:8px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .15s;}
 .btn-ai:hover{background:rgba(79,195,247,.2);}
 
-/* ── 옵션 & 액션 ── */
 .options-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
 .styled-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--text);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;flex:1;min-width:120px;}
 .styled-select:focus{outline:none;border-color:var(--green);}
 .action-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
-.btn-generate{background:linear-gradient(135deg,var(--green-dim),var(--green));color:var(--bg);font-size:14px;padding:11px 24px;border-radius:10px;flex:1;}
+.btn-generate{background:linear-gradient(135deg,var(--green-dim),var(--green));color:var(--bg);font-size:14px;padding:11px 24px;border-radius:10px;flex:1;font-family:'Noto Sans KR',sans-serif;font-weight:700;cursor:pointer;border:none;}
 .btn-generate:hover{filter:brightness(1.1);}
-.btn-secondary{background:transparent;border:1px solid var(--blue);color:var(--blue);font-size:13px;padding:11px 20px;border-radius:10px;}
+.btn-secondary{background:transparent;border:1px solid var(--blue);color:var(--blue);font-size:13px;padding:11px 20px;border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-weight:700;cursor:pointer;}
 .btn-secondary:hover{background:rgba(79,195,247,.08);}
 
-/* ── 상태 & 오디오 ── */
 .status-bar{margin-top:14px;font-size:13px;color:var(--muted);min-height:20px;}
 .status-bar.ok{color:var(--green);}
 .status-bar.err{color:var(--danger);}
 audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(180deg);}
 
-/* ── 스피너 ── */
 .spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── 기록 ── */
 .history-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:border-color .15s;}
 .history-item:hover{border-color:var(--green-dim);}
 .history-match{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;color:var(--green);margin-bottom:6px;}
@@ -147,10 +111,8 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
-  <!-- ── 헤더 ── -->
   <header>
     <div class="logo">
       <div class="logo-icon">⚽</div>
@@ -164,30 +126,24 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
         <div class="avatar" id="avatarInitial">?</div>
         <span id="userName">-</span>
       </div>
-      <button class="btn btn-login" id="loginBtn" onclick="login()">구글 로그인</button>
-      <button class="btn btn-logout" id="logoutBtn" onclick="logout()" style="display:none">로그아웃</button>
+      <button class="btn btn-login" id="loginBtn" onclick="doLogin()">구글 로그인</button>
+      <button class="btn btn-logout" id="logoutBtn" onclick="doLogout()" style="display:none">로그아웃</button>
     </div>
   </header>
 
-  <!-- ── 탭 ── -->
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('analyze',this)">⚽ 경기 분석</button>
-    <button class="tab" onclick="switchTab('history',this);loadHistory();">📋 분석 기록</button>
+    <button class="tab active" id="tab-btn-analyze" onclick="switchTab('analyze',this)">⚽ 경기 분석</button>
+    <button class="tab" id="tab-btn-history" onclick="switchTab('history',this);loadHistory();">📋 분석 기록</button>
   </div>
 
-  <!-- ══════════ 분석 탭 ══════════ -->
   <div class="tab-panel active" id="tab-analyze">
-
-    <!-- 경기 정보 -->
     <div class="card">
       <div class="section-label">경기 정보</div>
-
       <div class="match-grid">
         <input class="team-input" id="homeTeam" placeholder="홈팀 이름" oninput="updateScoreboard()">
         <div class="vs-badge">VS</div>
         <input class="team-input" id="awayTeam" placeholder="원정팀 이름" oninput="updateScoreboard()">
       </div>
-
       <div class="scoreboard">
         <div class="score-teams">
           <span id="sb-home">홈팀</span>
@@ -199,7 +155,6 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
         </div>
         <div class="score-minute" id="sb-min">경기 시간 미입력</div>
       </div>
-
       <div class="score-row">
         <input class="score-input" id="homeScore" type="number" min="0" placeholder="홈 득점" oninput="updateScoreboard()">
         <input class="score-input" id="awayScore" type="number" min="0" placeholder="원정 득점" oninput="updateScoreboard()">
@@ -207,7 +162,6 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
       </div>
     </div>
 
-    <!-- 경기 통계 -->
     <div class="card">
       <div class="section-label">경기 통계</div>
       <div class="stats-grid">
@@ -238,16 +192,10 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
       </div>
     </div>
 
-    <!-- 분석 & TTS -->
     <div class="card">
       <div class="section-label">분석 텍스트 &amp; 음성 리포트</div>
-
       <button class="btn-ai" onclick="generateAnalysis()">✨ AI 분석 텍스트 자동 생성</button>
-
-      <textarea class="analysis-textarea" id="textInput"
-        placeholder="분석 내용을 직접 입력하거나, 위 버튼으로 AI가 자동 작성합니다.&#10;&#10;예) 전반 45분, 홈팀이 집중적인 압박으로 경기를 주도하며 2:0 리드를 잡았습니다...">
-      </textarea>
-
+      <textarea class="analysis-textarea" id="textInput" placeholder="분석 내용을 직접 입력하거나, 위 버튼으로 AI가 자동 작성합니다."></textarea>
       <div class="options-row">
         <select class="styled-select" id="voiceSelect">
           <option value="alloy">Alloy — 중성</option>
@@ -262,25 +210,21 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
           <option value="tts-1-hd">HD 고품질</option>
         </select>
         <select class="styled-select" id="speedSelect">
-          <option value="0.9">느리게 ×0.9</option>
-          <option value="1" selected>보통 ×1.0</option>
-          <option value="1.1">약간 빠르게 ×1.1</option>
-          <option value="1.25">빠르게 ×1.25</option>
+          <option value="0.9">느리게 x0.9</option>
+          <option value="1" selected>보통 x1.0</option>
+          <option value="1.1">약간 빠르게 x1.1</option>
+          <option value="1.25">빠르게 x1.25</option>
         </select>
       </div>
-
       <div class="action-row">
-        <button class="btn btn-generate" onclick="makeSpeech()">🎙 음성 리포트 생성</button>
-        <button class="btn btn-secondary" onclick="switchTab('history',document.querySelectorAll('.tab')[1]);loadHistory();">📋 기록 보기</button>
+        <button class="btn-generate" onclick="makeSpeech()">🎙 음성 리포트 생성</button>
+        <button class="btn-secondary" onclick="switchTab('history',document.getElementById('tab-btn-history'));loadHistory();">📋 기록 보기</button>
       </div>
-
       <div class="status-bar" id="status"></div>
       <audio id="audioPlayer" controls style="display:none;"></audio>
     </div>
-
   </div>
 
-  <!-- ══════════ 기록 탭 ══════════ -->
   <div class="tab-panel" id="tab-history">
     <div class="card">
       <div class="section-label">내 분석 기록</div>
@@ -292,18 +236,10 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
 
 </div>
 
-<!-- ══════════ Firebase (module) ══════════ -->
-<script type="module">
-import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getDatabase, ref, push, get, child }
-  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-/* ──────────────────────────────────────────
-   🔧 Firebase 설정 — 본인 프로젝트 값으로 교체
-────────────────────────────────────────── */
+<script>
+// =============================================
+// Firebase 초기화 (compat 버전 — 모듈 아님)
+// =============================================
 const firebaseConfig = {
   apiKey:            "AIzaSyCk0qXDAvnFE9bCdjrL03XpuM83s09t_Zk",
   authDomain:        "realtestcount.firebaseapp.com",
@@ -314,40 +250,32 @@ const firebaseConfig = {
   appId:             "1:838572880697:web:6326057ff983a5212e6ee8"
 };
 
-const app      = initializeApp(firebaseConfig);
-const auth     = getAuth(app);
-const provider = new GoogleAuthProvider();
-const db       = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const auth     = firebase.auth();
+const db       = firebase.database();
+const provider = new firebase.auth.GoogleAuthProvider();
 
-/* 전역 노출 (일반 <script> 에서 사용) */
-window._auth     = auth;
-  window._getAuth  = () => auth.currentUser;
-window._provider = provider;
-window._db       = db;
-window._ref      = ref;
-window._push     = push;
-window._get      = get;
-window._child    = child;
-window.currentUser = null;
+// =============================================
+// 로그인 / 로그아웃
+// =============================================
+function doLogin() {
+  auth.signInWithPopup(provider).catch(function(e) {
+    setStatus('로그인 오류: ' + e.message, 'err');
+  });
+}
 
-/* 로그인 — 리다이렉트 방식 (팝업 차단 우회) */
-window.login = () => {
-  signInWithRedirect(auth, provider);
-};
+function doLogout() {
+  auth.signOut();
+}
 
-/* 페이지 로드 시 리다이렉트 복귀 결과 처리 */
-getRedirectResult(auth).catch(e => {
-  console.error('로그인 오류:', e.code, e.message);
-});
-
-window.logout = async () => { await signOut(auth); };
-
-/* 인증 상태 감지 */
-onAuthStateChanged(auth, user => {
-  window.currentUser = user;
+// =============================================
+// 인증 상태 감지 — 여기서만 UI 업데이트
+// =============================================
+auth.onAuthStateChanged(function(user) {
   const badge     = document.getElementById('userBadge');
   const loginBtn  = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
+
   if (user) {
     badge.classList.add('show');
     loginBtn.style.display  = 'none';
@@ -362,80 +290,78 @@ onAuthStateChanged(auth, user => {
     logoutBtn.style.display = 'none';
   }
 });
-</script>
 
-<!-- ══════════ 앱 로직 ══════════ -->
-<script>
-/* ──────────────────────────────────────────
-   🔧 Apps Script 배포 URL — 본인 URL로 교체
-────────────────────────────────────────── */
+// =============================================
+// 현재 유저 가져오기 (항상 Firebase에서 직접)
+// =============================================
+function getCurrentUser() {
+  return auth.currentUser;
+}
+
+// =============================================
+// Apps Script URL
+// =============================================
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbz8axjxT6nxCtXoLLN0uegmXaKU7YQi_wczr3NHdjqnF1k7oahvXnCOowSJ6LEqnhh2/exec";
 
-/* ── 탭 전환 ── */
+// =============================================
+// UI 함수들
+// =============================================
 function switchTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('tab-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
 }
 
-/* ── 점수판 ── */
 function updateScoreboard() {
   document.getElementById('sb-home').textContent = document.getElementById('homeTeam').value  || '홈팀';
   document.getElementById('sb-away').textContent = document.getElementById('awayTeam').value  || '원정팀';
   document.getElementById('sb-hs').textContent   = document.getElementById('homeScore').value || '0';
   document.getElementById('sb-as').textContent   = document.getElementById('awayScore').value || '0';
-  const m = document.getElementById('matchMinute').value;
+  var m = document.getElementById('matchMinute').value;
   document.getElementById('sb-min').textContent  = m ? m + '분 경과' : '경기 시간 미입력';
 }
 
-/* ── 상태 메시지 ── */
-function setStatus(msg, type = '') {
-  const el = document.getElementById('status');
-  el.innerHTML   = msg;
-  el.className   = 'status-bar ' + type;
+function setStatus(msg, type) {
+  var el = document.getElementById('status');
+  el.innerHTML  = msg;
+  el.className  = 'status-bar ' + (type || '');
 }
 
-/* ── AI 분석 텍스트 생성 ── */
+// =============================================
+// AI 분석 텍스트 생성
+// =============================================
 async function generateAnalysis() {
-  const home = document.getElementById('homeTeam').value  || '홈팀';
-  const away = document.getElementById('awayTeam').value  || '원정팀';
-  const hs   = document.getElementById('homeScore').value || '0';
-  const as_  = document.getElementById('awayScore').value || '0';
-  const min  = document.getElementById('matchMinute').value || '?';
-  const pos  = document.getElementById('possession').value;
-  const sh   = document.getElementById('shots').value;
-  const sot  = document.getElementById('sot').value;
-  const cor  = document.getElementById('corners').value;
-  const fou  = document.getElementById('fouls').value;
-  const yel  = document.getElementById('yellows').value;
+  var home = document.getElementById('homeTeam').value  || '홈팀';
+  var away = document.getElementById('awayTeam').value  || '원정팀';
+  var hs   = document.getElementById('homeScore').value || '0';
+  var as_  = document.getElementById('awayScore').value || '0';
+  var min  = document.getElementById('matchMinute').value || '?';
+  var pos  = document.getElementById('possession').value;
+  var sh   = document.getElementById('shots').value;
+  var sot  = document.getElementById('sot').value;
+  var cor  = document.getElementById('corners').value;
+  var fou  = document.getElementById('fouls').value;
+  var yel  = document.getElementById('yellows').value;
 
   setStatus('<span class="spinner"></span>AI 분석 텍스트 생성 중...', '');
 
-  const prompt =
-`당신은 전문 축구 해설 분석가입니다. 아래 경기 데이터를 바탕으로 생동감 있고 전문적인 경기 분석 리포트를 한국어로 200~300자 내외로 작성하세요. 숫자를 자연스럽게 녹여내고 경기 흐름과 핵심 포인트를 짚어 주세요.
-
-경기: ${home} vs ${away}
-현재 스코어: ${hs}:${as_} (${min}분)
-홈팀 점유율: ${pos}%
-홈팀 슈팅: ${sh}회 / 유효슈팅: ${sot}회
-홈팀 코너킥: ${cor}회 / 파울: ${fou}회 / 경고: ${yel}개
-
-분석 리포트만 작성하세요. 제목·부가 설명 없이 바로 본문으로 시작하세요.`;
-
   try {
-    const res  = await fetch("https://api.anthropic.com/v1/messages", {
+    var res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
+        messages: [{
+          role: "user",
+          content: "당신은 전문 축구 해설 분석가입니다. 아래 경기 데이터를 바탕으로 생동감 있고 전문적인 경기 분석 리포트를 한국어로 200~300자 내외로 작성하세요. 숫자를 자연스럽게 녹여내고 경기 흐름과 핵심 포인트를 짚어 주세요.\n\n경기: " + home + " vs " + away + "\n현재 스코어: " + hs + ":" + as_ + " (" + min + "분)\n홈팀 점유율: " + pos + "%\n홈팀 슈팅: " + sh + "회 / 유효슈팅: " + sot + "회\n홈팀 코너킥: " + cor + "회 / 파울: " + fou + "회 / 경고: " + yel + "개\n\n분석 리포트만 작성하세요. 제목 없이 바로 본문으로 시작하세요."
+        }]
       })
     });
-    const data = await res.json();
-    const text = data.content.map(i => i.text || '').join('\n').trim();
+    var data = await res.json();
+    var text = data.content.map(function(i){ return i.text || ''; }).join('\n').trim();
     document.getElementById('textInput').value = text;
     setStatus('✅ AI 분석 텍스트 생성 완료', 'ok');
   } catch(e) {
@@ -443,106 +369,110 @@ async function generateAnalysis() {
   }
 }
 
-/* ── 음성 리포트 생성 ── */
+// =============================================
+// 음성 리포트 생성
+// =============================================
 async function makeSpeech() {
-  const user = window.currentUser || (window._auth && window._auth.currentUser);
+  var user = getCurrentUser();
   if (!user) {
     setStatus('먼저 구글 로그인이 필요합니다.', 'err');
     return;
   }
-  window.currentUser = user;
-  const text = document.getElementById('textInput').value.trim();
+
+  var text = document.getElementById('textInput').value.trim();
   if (!text) { setStatus('분석 텍스트를 입력하거나 AI로 생성하세요.', 'err'); return; }
 
-  const home  = document.getElementById('homeTeam').value  || '홈팀';
-  const away  = document.getElementById('awayTeam').value  || '원정팀';
-  const hs    = document.getElementById('homeScore').value || '0';
-  const as_   = document.getElementById('awayScore').value || '0';
-  const model = document.getElementById('modelSelect').value;
-  const voice = document.getElementById('voiceSelect').value;
-  const speed = Number(document.getElementById('speedSelect').value);
+  var home  = document.getElementById('homeTeam').value  || '홈팀';
+  var away  = document.getElementById('awayTeam').value  || '원정팀';
+  var hs    = document.getElementById('homeScore').value || '0';
+  var as_   = document.getElementById('awayScore').value || '0';
+  var model = document.getElementById('modelSelect').value;
+  var voice = document.getElementById('voiceSelect').value;
+  var speed = Number(document.getElementById('speedSelect').value);
 
   setStatus('<span class="spinner"></span>음성 리포트 생성 중...', '');
 
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
+    var res = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
-      body: JSON.stringify({ text, model, voice, speed })
+      body: JSON.stringify({ text: text, model: model, voice: voice, speed: speed })
     });
-    const result = await res.json();
+    var result = await res.json();
     if (!result.success) throw new Error(result.error);
 
-    const player = document.getElementById('audioPlayer');
-    player.src   = "data:audio/mp3;base64," + result.audioBase64;
+    var player = document.getElementById('audioPlayer');
+    player.src = "data:audio/mp3;base64," + result.audioBase64;
     player.style.display = 'block';
 
-    /* Firebase 저장 */
-    await window._push(
-      window._ref(window._db, "soccerTTS"),
-      {
-        uid:         window.currentUser.uid,
-        email:       window.currentUser.email,
-        name:        window.currentUser.displayName,
-        homeTeam:    home,
-        awayTeam:    away,
-        homeScore:   hs,
-        awayScore:   as_,
-        possession:  document.getElementById('possession').value,
-        shots:       document.getElementById('shots').value,
-        text,  model,  voice,  speed,
-        createdAt:   new Date().toLocaleString('ko-KR')
-      }
-    );
+    // Firebase 저장
+    db.ref("soccerTTS").push({
+      uid:        user.uid,
+      email:      user.email,
+      name:       user.displayName,
+      homeTeam:   home,
+      awayTeam:   away,
+      homeScore:  hs,
+      awayScore:  as_,
+      possession: document.getElementById('possession').value,
+      shots:      document.getElementById('shots').value,
+      text:       text,
+      model:      model,
+      voice:      voice,
+      speed:      speed,
+      createdAt:  new Date().toLocaleString('ko-KR')
+    });
+
     setStatus('✅ 음성 리포트 생성 및 저장 완료', 'ok');
   } catch(e) {
     setStatus('오류: ' + e.message, 'err');
   }
 }
 
-/* ── 기록 불러오기 ── */
+// =============================================
+// 기록 불러오기
+// =============================================
 async function loadHistory() {
-  const list = document.getElementById('historyList');
-  const user = window.currentUser || (window._auth && window._auth.currentUser);
+  var list = document.getElementById('historyList');
+  var user = getCurrentUser();
+
   if (!user) {
-    list.innerHTML = `<div class="empty-state"><div class="big">🔐</div><div>로그인 후 기록을 확인할 수 있습니다.</div></div>`;
+    list.innerHTML = '<div class="empty-state"><div class="big">🔐</div><div>로그인 후 기록을 확인할 수 있습니다.</div></div>';
     return;
   }
-  window.currentUser = user;
+
   list.innerHTML = '<span class="spinner"></span> 기록 불러오는 중...';
+
   try {
-    const snap = await window._get(window._child(window._ref(window._db), "soccerTTS"));
+    var snap = await db.ref("soccerTTS").once("value");
     if (!snap.exists()) {
-      list.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>아직 분석 기록이 없습니다.</div></div>`;
+      list.innerHTML = '<div class="empty-state"><div class="big">📭</div><div>아직 분석 기록이 없습니다.</div></div>';
       return;
     }
-    const data = snap.val();
-    const mine = Object.entries(data).reverse().filter(([,i]) => i.uid === window.currentUser.uid);
+
+    var data = snap.val();
+    var mine = Object.entries(data)
+      .reverse()
+      .filter(function(entry){ return entry[1].uid === user.uid; });
+
     if (!mine.length) {
-      list.innerHTML = `<div class="empty-state"><div class="big">📭</div><div>내 분석 기록이 없습니다.</div></div>`;
+      list.innerHTML = '<div class="empty-state"><div class="big">📭</div><div>내 분석 기록이 없습니다.</div></div>';
       return;
     }
-    list.innerHTML = mine.map(([,i]) => `
-      <div class="history-item">
-        <div class="history-match">⚽ ${i.homeTeam||'홈팀'} ${i.homeScore||0} : ${i.awayScore||0} ${i.awayTeam||'원정팀'}</div>
-        <div class="history-meta">
-          <span>🎙 ${i.voice}</span>
-          <span>📊 점유율 ${i.possession||'-'}%</span>
-          <span>🎯 슈팅 ${i.shots||'-'}회</span>
-          <span>${i.model==='tts-1-hd'?'HD품질':'표준품질'}</span>
-        </div>
-        <div class="history-text">${i.text}</div>
-        <div class="history-date">${i.createdAt}</div>
-      </div>`).join('');
+
+    list.innerHTML = mine.map(function(entry){
+      var i = entry[1];
+      return '<div class="history-item">' +
+        '<div class="history-match">⚽ ' + (i.homeTeam||'홈팀') + ' ' + (i.homeScore||0) + ' : ' + (i.awayScore||0) + ' ' + (i.awayTeam||'원정팀') + '</div>' +
+        '<div class="history-meta"><span>🎙 ' + i.voice + '</span><span>📊 점유율 ' + (i.possession||'-') + '%</span><span>🎯 슈팅 ' + (i.shots||'-') + '회</span><span>' + (i.model==='tts-1-hd'?'HD품질':'표준품질') + '</span></div>' +
+        '<div class="history-text">' + i.text + '</div>' +
+        '<div class="history-date">' + i.createdAt + '</div>' +
+        '</div>';
+    }).join('');
+
   } catch(e) {
-    list.innerHTML = `<div class="empty-state"><div class="big">⚠️</div><div>불러오기 실패: ${e.message}</div></div>`;
+    list.innerHTML = '<div class="empty-state"><div class="big">⚠️</div><div>불러오기 실패: ' + e.message + '</div></div>';
   }
 }
-
-window.loadHistory      = loadHistory;
-window.makeSpeech       = makeSpeech;
-window.generateAnalysis = generateAnalysis;
-window.updateScoreboard = updateScoreboard;
-window.switchTab        = switchTab;
 </script>
 </body>
 </html>
