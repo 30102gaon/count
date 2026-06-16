@@ -16,6 +16,8 @@
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 38px,rgba(57,255,143,.03) 38px,rgba(57,255,143,.03) 40px),repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(57,255,143,.03) 38px,rgba(57,255,143,.03) 40px);pointer-events:none;z-index:0;}
 .wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:24px 16px 60px;}
+
+/* ── 헤더 ── */
 header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
 .logo{display:flex;align-items:center;gap:12px;}
 .logo-icon{width:44px;height:44px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
@@ -28,17 +30,41 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);}
 .btn{border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'Noto Sans KR',sans-serif;}
 .btn:active{transform:scale(.97);}
-.btn-login{background:var(--green);color:var(--bg);}
-.btn-login:hover{background:#5dffa8;}
-.btn-logout{background:transparent;border:1px solid var(--danger);color:var(--danger);}
-.btn-logout:hover{background:rgba(255,82,82,.1);}
+.btn-green{background:var(--green);color:var(--bg);}
+.btn-green:hover{background:#5dffa8;}
+.btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+.btn-danger:hover{background:rgba(255,82,82,.1);}
+
+/* ── 로그인 모달 ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;width:min(400px,90vw);}
+.modal-title{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--green);margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.modal-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border-radius:10px;padding:4px;}
+.modal-tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent;font-family:'Noto Sans KR',sans-serif;transition:all .15s;}
+.modal-tab.active{background:var(--card);color:var(--green);border:1px solid var(--green-dim);}
+.input-group{margin-bottom:14px;}
+.input-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
+.auth-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:'Noto Sans KR',sans-serif;}
+.auth-input:focus{outline:none;border-color:var(--green);}
+.auth-input::placeholder{color:var(--muted);}
+.auth-err{font-size:12px;color:var(--danger);margin-bottom:12px;min-height:18px;}
+.btn-full{width:100%;padding:12px;font-size:14px;border-radius:10px;margin-top:4px;}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;}
+
+/* ── 탭 ── */
 .tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;}
 .tab{flex:1;text-align:center;padding:9px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--muted);border:none;background:transparent;font-family:'Noto Sans KR',sans-serif;}
 .tab.active{background:var(--card);color:var(--green);border:1px solid var(--green-dim);}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
+
+/* ── 카드 ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
 .section-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-family:'Oswald',sans-serif;margin-bottom:12px;}
+
+/* ── 경기 입력 ── */
 .match-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:16px;}
 .team-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:15px;font-family:'Oswald',sans-serif;font-weight:600;width:100%;text-align:center;}
 .team-input::placeholder{color:var(--muted);}
@@ -56,12 +82,16 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .score-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--text);font-size:14px;width:100%;}
 .score-input::placeholder{color:var(--muted);}
 .score-input:focus{outline:none;border-color:var(--blue);}
+
+/* ── 통계 ── */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:560px){.stats-grid{grid-template-columns:1fr;}}
 .stat-item label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
 .stat-item label span{color:var(--blue);font-weight:700;}
 input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:4px;background:var(--border);cursor:pointer;margin-top:2px;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;}
+
+/* ── 분석 ── */
 .analysis-textarea{width:100%;min-height:140px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-size:14px;line-height:1.7;resize:vertical;font-family:'Noto Sans KR',sans-serif;margin-top:12px;}
 .analysis-textarea::placeholder{color:var(--muted);}
 .analysis-textarea:focus{outline:none;border-color:var(--green);}
@@ -71,6 +101,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .styled-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--text);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;flex:1;min-width:120px;}
 .action-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
 .btn-generate{background:linear-gradient(135deg,var(--green-dim),var(--green));color:var(--bg);font-size:14px;padding:11px 24px;border-radius:10px;flex:1;font-family:'Noto Sans KR',sans-serif;font-weight:700;cursor:pointer;border:none;}
+.btn-generate:hover{filter:brightness(1.1);}
 .btn-secondary{background:transparent;border:1px solid var(--blue);color:var(--blue);font-size:13px;padding:11px 20px;border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-weight:700;cursor:pointer;}
 .status-bar{margin-top:14px;font-size:13px;color:var(--muted);min-height:20px;}
 .status-bar.ok{color:var(--green);}
@@ -78,6 +109,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(180deg);}
 .spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── 기록 ── */
 .history-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
 .history-item:hover{border-color:var(--green-dim);}
 .history-match{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;color:var(--green);margin-bottom:6px;}
@@ -91,6 +124,7 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
 <body>
 <div class="wrap">
 
+  <!-- 헤더 -->
   <header>
     <div class="logo">
       <div class="logo-icon">⚽</div>
@@ -104,16 +138,63 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
         <div class="avatar" id="avatarInitial">?</div>
         <span id="userName">-</span>
       </div>
-      <button class="btn btn-login" id="loginBtn">구글 로그인</button>
-      <button class="btn btn-logout" id="logoutBtn" style="display:none">로그아웃</button>
+      <button class="btn btn-green" id="loginBtn" onclick="openModal()">로그인 / 회원가입</button>
+      <button class="btn btn-danger" id="logoutBtn" onclick="doLogout()" style="display:none">로그아웃</button>
     </div>
   </header>
 
+  <!-- 로그인 모달 -->
+  <div class="modal-bg" id="modalBg" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-title">⚽ MatchAI</div>
+      <div class="modal-sub">이메일로 로그인하거나 회원가입 하세요</div>
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="mt-login" onclick="switchModalTab('login')">로그인</button>
+        <button class="modal-tab" id="mt-signup" onclick="switchModalTab('signup')">회원가입</button>
+      </div>
+
+      <!-- 로그인 폼 -->
+      <div id="form-login">
+        <div class="input-group">
+          <label>이메일</label>
+          <input class="auth-input" id="loginEmail" type="email" placeholder="이메일 주소">
+        </div>
+        <div class="input-group">
+          <label>비밀번호</label>
+          <input class="auth-input" id="loginPw" type="password" placeholder="비밀번호">
+        </div>
+        <div class="auth-err" id="loginErr"></div>
+        <button class="btn btn-green btn-full" onclick="doLogin()">로그인</button>
+      </div>
+
+      <!-- 회원가입 폼 -->
+      <div id="form-signup" style="display:none">
+        <div class="input-group">
+          <label>닉네임</label>
+          <input class="auth-input" id="signupName" type="text" placeholder="닉네임">
+        </div>
+        <div class="input-group">
+          <label>이메일</label>
+          <input class="auth-input" id="signupEmail" type="email" placeholder="이메일 주소">
+        </div>
+        <div class="input-group">
+          <label>비밀번호 (6자 이상)</label>
+          <input class="auth-input" id="signupPw" type="password" placeholder="비밀번호">
+        </div>
+        <div class="auth-err" id="signupErr"></div>
+        <button class="btn btn-green btn-full" onclick="doSignup()">회원가입</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 -->
   <div class="tabs">
     <button class="tab active" id="tab-btn-analyze" onclick="switchTab('analyze',this)">⚽ 경기 분석</button>
     <button class="tab" id="tab-btn-history" onclick="switchTab('history',this);loadHistory();">📋 분석 기록</button>
   </div>
 
+  <!-- 분석 탭 -->
   <div class="tab-panel active" id="tab-analyze">
     <div class="card">
       <div class="section-label">경기 정보</div>
@@ -185,6 +266,7 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
     </div>
   </div>
 
+  <!-- 기록 탭 -->
   <div class="tab-panel" id="tab-history">
     <div class="card">
       <div class="section-label">내 분석 기록</div>
@@ -195,75 +277,114 @@ audio{width:100%;margin-top:14px;border-radius:10px;filter:invert(1) hue-rotate(
   </div>
 </div>
 
-<!-- Firebase SDK → body 맨 끝에 위치 (로드 보장) -->
+<!-- Firebase SDK (body 맨 끝) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <script>
-// Firebase SDK 로드 확인 후 초기화
-(function init() {
-  if (typeof firebase === 'undefined') {
-    setTimeout(init, 100);
-    return;
+
+firebase.initializeApp({
+  apiKey:            "AIzaSyCk0qXDAvnFE9bCdjrL03XpuM83s09t_Zk",
+  authDomain:        "realtestcount.firebaseapp.com",
+  databaseURL:       "https://realtestcount-default-rtdb.firebaseio.com",
+  projectId:         "realtestcount",
+  storageBucket:     "realtestcount.firebasestorage.app",
+  messagingSenderId: "838572880697",
+  appId:             "1:838572880697:web:6326057ff983a5212e6ee8"
+});
+
+var auth = firebase.auth();
+var db   = firebase.database();
+
+// ── 인증 상태 감지 ──
+auth.onAuthStateChanged(function(user) {
+  window._user = user || null;
+  if (user) {
+    document.getElementById('userBadge').classList.add('show');
+    document.getElementById('loginBtn').style.display  = 'none';
+    document.getElementById('logoutBtn').style.display = '';
+    document.getElementById('avatarInitial').textContent =
+      (user.displayName || user.email || '?')[0].toUpperCase();
+    document.getElementById('userName').textContent =
+      user.displayName || user.email;
+    closeModal();
+  } else {
+    document.getElementById('userBadge').classList.remove('show');
+    document.getElementById('loginBtn').style.display  = '';
+    document.getElementById('logoutBtn').style.display = 'none';
   }
+});
 
-  firebase.initializeApp({
-    apiKey:            "AIzaSyCk0qXDAvnFE9bCdjrL03XpuM83s09t_Zk",
-    authDomain:        "realtestcount.firebaseapp.com",
-    databaseURL:       "https://realtestcount-default-rtdb.firebaseio.com",
-    projectId:         "realtestcount",
-    storageBucket:     "realtestcount.firebasestorage.app",
-    messagingSenderId: "838572880697",
-    appId:             "1:838572880697:web:6326057ff983a5212e6ee8"
+// ── 모달 ──
+function openModal()  { document.getElementById('modalBg').classList.add('show'); }
+function closeModal() { document.getElementById('modalBg').classList.remove('show'); }
+function closeModalOutside(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
+
+function switchModalTab(t) {
+  document.getElementById('form-login').style.display  = t==='login'  ? '' : 'none';
+  document.getElementById('form-signup').style.display = t==='signup' ? '' : 'none';
+  document.getElementById('mt-login').classList.toggle('active',  t==='login');
+  document.getElementById('mt-signup').classList.toggle('active', t==='signup');
+  document.getElementById('loginErr').textContent  = '';
+  document.getElementById('signupErr').textContent = '';
+}
+
+// ── 로그인 ──
+function doLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pw    = document.getElementById('loginPw').value;
+  var err   = document.getElementById('loginErr');
+  if (!email || !pw) { err.textContent = '이메일과 비밀번호를 입력하세요.'; return; }
+  err.textContent = '';
+  auth.signInWithEmailAndPassword(email, pw).catch(function(e) {
+    var msg = {
+      'auth/user-not-found':  '등록되지 않은 이메일입니다.',
+      'auth/wrong-password':  '비밀번호가 틀렸습니다.',
+      'auth/invalid-email':   '이메일 형식이 올바르지 않습니다.',
+      'auth/invalid-credential': '이메일 또는 비밀번호가 올바르지 않습니다.'
+    }[e.code] || e.message;
+    err.textContent = msg;
   });
+}
 
-  var auth     = firebase.auth();
-  var db       = firebase.database();
-  var provider = new firebase.auth.GoogleAuthProvider();
-
-  // 로그인 버튼 이벤트
-  document.getElementById('loginBtn').onclick = function() {
-    auth.signInWithPopup(provider).catch(function(e) {
-      setStatus('로그인 오류: ' + e.code, 'err');
-      console.error(e);
-    });
-  };
-
-  // 로그아웃 버튼 이벤트
-  document.getElementById('logoutBtn').onclick = function() {
-    auth.signOut();
-  };
-
-  // 인증 상태 감지 → UI 업데이트
-  auth.onAuthStateChanged(function(user) {
-    window._currentUser = user || null;
-
-    if (user) {
-      document.getElementById('userBadge').classList.add('show');
-      document.getElementById('loginBtn').style.display  = 'none';
-      document.getElementById('logoutBtn').style.display = '';
-      document.getElementById('avatarInitial').textContent =
-        (user.displayName || user.email || '?')[0].toUpperCase();
-      document.getElementById('userName').textContent =
-        user.displayName || user.email;
-    } else {
-      document.getElementById('userBadge').classList.remove('show');
-      document.getElementById('loginBtn').style.display  = '';
-      document.getElementById('logoutBtn').style.display = 'none';
-    }
+// ── 회원가입 ──
+function doSignup() {
+  var name  = document.getElementById('signupName').value.trim();
+  var email = document.getElementById('signupEmail').value.trim();
+  var pw    = document.getElementById('signupPw').value;
+  var err   = document.getElementById('signupErr');
+  if (!name || !email || !pw) { err.textContent = '모든 항목을 입력하세요.'; return; }
+  if (pw.length < 6)          { err.textContent = '비밀번호는 6자 이상이어야 합니다.'; return; }
+  err.textContent = '';
+  auth.createUserWithEmailAndPassword(email, pw).then(function(result) {
+    return result.user.updateProfile({ displayName: name });
+  }).catch(function(e) {
+    var msg = {
+      'auth/email-already-in-use': '이미 사용 중인 이메일입니다.',
+      'auth/invalid-email':        '이메일 형식이 올바르지 않습니다.',
+      'auth/weak-password':        '비밀번호가 너무 약합니다.'
+    }[e.code] || e.message;
+    err.textContent = msg;
   });
+}
 
-  // DB 전역 노출 (makeSpeech, loadHistory에서 사용)
-  window._db = db;
+// ── 로그아웃 ──
+function doLogout() { auth.signOut(); }
 
-})();
+// ── Enter 키 ──
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('form-login').style.display !== 'none' &&
+      document.getElementById('modalBg').classList.contains('show')) doLogin();
+});
 
-// ── Apps Script URL ──
-const APPS_SCRIPT_URL =
+// =============================================
+// Apps Script URL
+// =============================================
+var APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbz8axjxT6nxCtXoLLN0uegmXaKU7YQi_wczr3NHdjqnF1k7oahvXnCOowSJ6LEqnhh2/exec";
 
-// ── UI 함수 ──
+// ── UI ──
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
   document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
@@ -286,56 +407,43 @@ function setStatus(msg, type) {
   el.className = 'status-bar ' + (type || '');
 }
 
-// ── AI 분석 텍스트 생성 ──
+// ── AI 분석 ──
 async function generateAnalysis() {
   var home = document.getElementById('homeTeam').value  || '홈팀';
   var away = document.getElementById('awayTeam').value  || '원정팀';
   var hs   = document.getElementById('homeScore').value || '0';
   var as_  = document.getElementById('awayScore').value || '0';
   var min  = document.getElementById('matchMinute').value || '?';
-  var pos  = document.getElementById('possession').value;
-  var sh   = document.getElementById('shots').value;
-  var sot  = document.getElementById('sot').value;
-  var cor  = document.getElementById('corners').value;
-  var fou  = document.getElementById('fouls').value;
-  var yel  = document.getElementById('yellows').value;
-
   setStatus('<span class="spinner"></span>AI 분석 텍스트 생성 중...', '');
   try {
     var res  = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
+        model: "claude-sonnet-4-20250514", max_tokens: 1000,
         messages: [{ role: "user", content:
-          "전문 축구 해설 분석가로서 아래 경기 데이터를 바탕으로 한국어 200~300자 분석 리포트를 작성하세요. 제목 없이 바로 시작.\n\n경기: "+home+" vs "+away+"\n스코어: "+hs+":"+as_+" ("+min+"분)\n점유율: "+pos+"% / 슈팅: "+sh+" / 유효슈팅: "+sot+" / 코너: "+cor+" / 파울: "+fou+" / 경고: "+yel
+          "전문 축구 해설 분석가로서 아래 경기 데이터를 바탕으로 한국어 200~300자 분석 리포트를 작성하세요. 제목 없이 바로 시작.\n\n경기: "+home+" vs "+away+"\n스코어: "+hs+":"+as_+" ("+min+"분)\n점유율: "+document.getElementById('possession').value+"% / 슈팅: "+document.getElementById('shots').value+" / 유효슈팅: "+document.getElementById('sot').value+" / 코너: "+document.getElementById('corners').value+" / 파울: "+document.getElementById('fouls').value+" / 경고: "+document.getElementById('yellows').value
         }]
       })
     });
     var data = await res.json();
-    document.getElementById('textInput').value =
-      data.content.map(function(i){ return i.text||''; }).join('').trim();
+    document.getElementById('textInput').value = data.content.map(function(i){ return i.text||''; }).join('').trim();
     setStatus('✅ 완료', 'ok');
-  } catch(e) {
-    setStatus('오류: ' + e.message, 'err');
-  }
+  } catch(e) { setStatus('오류: ' + e.message, 'err'); }
 }
 
 // ── 음성 생성 ──
 async function makeSpeech() {
-  var user = window._currentUser;
-  if (!user) { setStatus('먼저 구글 로그인이 필요합니다.', 'err'); return; }
-
+  var user = window._user;
+  if (!user) { setStatus('먼저 로그인이 필요합니다.', 'err'); return; }
   var text = document.getElementById('textInput').value.trim();
   if (!text) { setStatus('텍스트를 입력하거나 AI로 생성하세요.', 'err'); return; }
-
   setStatus('<span class="spinner"></span>음성 리포트 생성 중...', '');
   try {
-    var res    = await fetch(APPS_SCRIPT_URL, {
+    var res = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
-        text:  text,
+        text: text,
         model: document.getElementById('modelSelect').value,
         voice: document.getElementById('voiceSelect').value,
         speed: Number(document.getElementById('speedSelect').value)
@@ -343,48 +451,43 @@ async function makeSpeech() {
     });
     var result = await res.json();
     if (!result.success) throw new Error(result.error);
-
     var player = document.getElementById('audioPlayer');
     player.src = "data:audio/mp3;base64," + result.audioBase64;
     player.style.display = 'block';
-
-    window._db.ref("soccerTTS").push({
-      uid: user.uid, email: user.email, name: user.displayName,
-      homeTeam:   document.getElementById('homeTeam').value  || '홈팀',
-      awayTeam:   document.getElementById('awayTeam').value  || '원정팀',
-      homeScore:  document.getElementById('homeScore').value || '0',
-      awayScore:  document.getElementById('awayScore').value || '0',
+    db.ref("soccerTTS").push({
+      uid: user.uid, email: user.email, name: user.displayName || user.email,
+      homeTeam: document.getElementById('homeTeam').value || '홈팀',
+      awayTeam: document.getElementById('awayTeam').value || '원정팀',
+      homeScore: document.getElementById('homeScore').value || '0',
+      awayScore: document.getElementById('awayScore').value || '0',
       possession: document.getElementById('possession').value,
-      shots:      document.getElementById('shots').value,
-      text:  text,
+      shots: document.getElementById('shots').value,
+      text: text,
       model: document.getElementById('modelSelect').value,
       voice: document.getElementById('voiceSelect').value,
       speed: Number(document.getElementById('speedSelect').value),
       createdAt: new Date().toLocaleString('ko-KR')
     });
     setStatus('✅ 음성 리포트 생성 및 저장 완료', 'ok');
-  } catch(e) {
-    setStatus('오류: ' + e.message, 'err');
-  }
+  } catch(e) { setStatus('오류: ' + e.message, 'err'); }
 }
 
-// ── 기록 불러오기 ──
+// ── 기록 ──
 async function loadHistory() {
   var list = document.getElementById('historyList');
-  var user = window._currentUser;
+  var user = window._user;
   if (!user) {
     list.innerHTML = '<div class="empty-state"><div class="big">🔐</div><div>로그인 후 확인 가능합니다.</div></div>';
     return;
   }
-  list.innerHTML = '<span class="spinner"></span> 불러오는 중...';
+  list.innerHTML = '<div style="color:var(--muted);padding:16px"><span class="spinner"></span> 불러오는 중...</div>';
   try {
-    var snap = await window._db.ref("soccerTTS").once("value");
+    var snap = await db.ref("soccerTTS").once("value");
     if (!snap.exists()) {
       list.innerHTML = '<div class="empty-state"><div class="big">📭</div><div>기록이 없습니다.</div></div>';
       return;
     }
-    var mine = Object.entries(snap.val()).reverse()
-      .filter(function(e){ return e[1].uid === user.uid; });
+    var mine = Object.entries(snap.val()).reverse().filter(function(e){ return e[1].uid === user.uid; });
     if (!mine.length) {
       list.innerHTML = '<div class="empty-state"><div class="big">📭</div><div>내 기록이 없습니다.</div></div>';
       return;
@@ -393,7 +496,7 @@ async function loadHistory() {
       var i = e[1];
       return '<div class="history-item">' +
         '<div class="history-match">⚽ '+(i.homeTeam||'홈팀')+' '+(i.homeScore||0)+' : '+(i.awayScore||0)+' '+(i.awayTeam||'원정팀')+'</div>' +
-        '<div class="history-meta"><span>🎙 '+i.voice+'</span><span>📊 '+( i.possession||'-')+'%</span><span>🎯 슈팅 '+(i.shots||'-')+'회</span></div>' +
+        '<div class="history-meta"><span>🎙 '+i.voice+'</span><span>📊 '+(i.possession||'-')+'%</span><span>🎯 슈팅 '+(i.shots||'-')+'회</span></div>' +
         '<div class="history-text">'+i.text+'</div>' +
         '<div class="history-date">'+i.createdAt+'</div></div>';
     }).join('');
